@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { axiosPrivate } from "../../services/config";
-import CustomSelect from "../../components/Select";
+import CustomSelect from "../../components/select";
 import Button from "../../components/Button";
 import ImageComponent from "../../components/image";
 import { IoAdd, IoEye, IoTrash, IoPencil } from "react-icons/io5";
@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { formatCustomDate } from "../../lib/dateTime";
 import { confirmAlert } from 'react-confirm-alert';
 import MatchesLoader from "./loader";
+import UpdateScore from "./UpdateScore";
 
 const Matches = () => {
     const navigate = useNavigate();
@@ -22,6 +23,8 @@ const Matches = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [teams, setTeams] = useState([]);
     const [showAddButton, setShowAddButton] = useState(false);
+    const [scoreModalOpen, setScoreModalOpen] = useState(false);
+    const [selectedMatch, setSelecetdMatch] = useState(null);
 
     async function fetchTournaments() {
         try {
@@ -98,15 +101,24 @@ const Matches = () => {
         return score.reduce((total, scoreItem) => total + scoreItem.score, 0);
     };
 
+    const openScoreModal = (matchId) => {
+        setSelecetdMatch(matchId);
+        setScoreModalOpen(true);
+    }
+
     const handleCb = () => {
         fetchMatchesAndTeams();
         setModalOpen(false);
+        setScoreModalOpen(false);
     };
 
     return (
         <div className="p-4">
             <ModalComponent isOpen={modalOpen} onClose={() => setModalOpen(false)}>
                 <AddMatch tournamentId={selectedTournament?.value} cb={handleCb} teams={teams} />
+            </ModalComponent>
+            <ModalComponent isOpen={scoreModalOpen} onClose={()=> setScoreModalOpen(false)}>
+                <UpdateScore tournamentId={selectedTournament?.value} cb={handleCb} matchId={selectedMatch} />
             </ModalComponent>
             <h2 className="text-xl font-semibold mb-4">Matches</h2>
 
@@ -137,10 +149,10 @@ const Matches = () => {
             ) : matches.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                     {matches.map((match) => (
-                        <div key={match._id} className="relative border border-gray-400 p-4 rounded-lg shadow-md flex flex-col justify-between min-h-[160px] group">
+                        <div key={match._id} className="relative border border-gray-400 p-4 rounded-lg shadow-md flex flex-col justify-between min-h-[160px] group cursor-pointer">
                             <div className="absolute inset-0 bg-gray-300 bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-3 transition-opacity duration-300">
                                 <button className="cursor-pointer bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700" onClick={() => navigate(`/matches/${selectedTournament?.value}/${match._id}`)}><IoEye size={20} /></button>
-                                <button className="cursor-pointer bg-green-600 text-white p-2 rounded-full hover:bg-green-700"><IoPencil size={20} /></button>
+                                <button className="cursor-pointer bg-green-600 text-white p-2 rounded-full hover:bg-green-700" onClick={()=>openScoreModal(match._id)}><IoPencil size={20} /></button>
                                 <button className="cursor-pointer bg-red-600 text-white p-2 rounded-full hover:bg-red-700" onClick={() => deleteMatch(match._id)}><IoTrash size={20} /></button>
                             </div>
                             <div className="flex items-center justify-between">

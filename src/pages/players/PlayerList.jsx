@@ -12,7 +12,7 @@ const PlayerList = ({ tournamentId, teamId }) => {
     useEffect(() => {
         async function fetchPlayers() {
             try {
-                const response = await axiosPrivate.get(`/player/${tournamentId}/${teamId}`);
+                const response = await axiosPrivate.get(`/user/${tournamentId}/${teamId}/play-time`);
                 setTeamName(response.data.teamName);
                 setPlayers(response.data.players);
             } catch (error) {
@@ -36,7 +36,7 @@ const PlayerList = ({ tournamentId, teamId }) => {
                     </h2>
 
                     {/* Player Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 overflow-scroll">
                         {players.length > 0 ? (
                             players.map((player) => (
                                 <div
@@ -46,6 +46,7 @@ const PlayerList = ({ tournamentId, teamId }) => {
                                     <div>
                                         <h3 className="text-sm font-medium">{player.name}</h3>
                                         <p className="text-xs text-gray-500">{player.position}</p>
+                                        <span className="rounded-sm bg-cyan-600 text-white text-xs px-2 py-1">{player.totalPlayTime} mins</span>
                                     </div>
                                     <button
                                         className="text-blue-500 hover:text-blue-700"

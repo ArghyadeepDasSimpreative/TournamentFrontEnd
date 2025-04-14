@@ -11,7 +11,7 @@ const ModalComponent = ({ isOpen, onClose, children, allowOverlayClick = true })
       )}
 
       {/* Modal Content */}
-      <div className="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-lg z-10">
+      <div className="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-[80vw] z-10">
         {/* Close Button */}
         <button
           className="absolute top-3 right-3 text-gray-600 hover:text-gray-900 cursor-pointer"
