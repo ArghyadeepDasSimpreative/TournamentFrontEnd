@@ -149,7 +149,7 @@ const Matches = () => {
             ) : matches.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                     {matches.map((match) => (
-                        <div key={match._id} className="relative border border-gray-400 p-4 rounded-lg shadow-md flex flex-col justify-between min-h-[160px] group cursor-pointer">
+                        <div key={match._id} className="relative border border-gray-400 p-4 rounded-lg shadow-md flex flex-col justify-between min-h-[160px] group cursor-pointer bg-white">
                             <div className="absolute inset-0 bg-gray-300 bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-3 transition-opacity duration-300">
                                 <button className="cursor-pointer bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700" onClick={() => navigate(`/matches/${selectedTournament?.value}/${match._id}`)}><IoEye size={20} /></button>
                                 <button className="cursor-pointer bg-green-600 text-white p-2 rounded-full hover:bg-green-700" onClick={()=>openScoreModal(match._id)}><IoPencil size={20} /></button>
@@ -169,7 +169,7 @@ const Matches = () => {
                                 </div>
                             </div>
                             <div className="flex w-full justify-between items-center">
-                                <div className="flex flex-col items-start justify-start mx-5 my-2">
+                                <div className="flex flex-col items-start justify-start mx-5 my-2 h-full">
                                     {match.homeTeamScore.map((score, index) => (
                                         <div key={index} className="flex gap-2">
                                             <span>{score.playerId.name}</span><span>{score.score}</span>

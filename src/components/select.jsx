@@ -10,7 +10,7 @@ const CustomSelect = ({ data, config, label, onSelect, defaultValue }) => {
   }))
 
   return (
-    <div className="w-[200px]">
+    <div className="w-[200px] mb-4">
       {label && <label className="block text-gray-700 font-medium mb-1 text-md">{label}</label>}
       <Select
         defaultValue={defaultValue}

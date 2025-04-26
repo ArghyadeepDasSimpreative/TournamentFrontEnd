@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoEye } from "react-icons/io5";
 import Button from "../../components/Button";
-import CustomSelect from "../../components/Select";
+import CustomSelect from "../../components/select";
 import ImageComponent from "../../components/image";
 import TableComponent from "../../components/Table";
 import { axiosPrivate } from "../../services/config";
@@ -36,7 +36,6 @@ export default function PlayersPage() {
 
     async function fetchTeams(tournament) {
         try {
-            console.log("guguguu")
             setTeamsLoading(true);
             setSelectedTournament(tournament);
             const response = await axiosPrivate.get(`/tournament/${tournament.value}/users`);
@@ -85,7 +84,7 @@ export default function PlayersPage() {
             label: "Actions",
             render: (row) => (
                 <button
-                    className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                    className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700 cursor-pointer"
                     onClick={() => handleModalOpen(row._id)}
                 >
                     <IoEye />

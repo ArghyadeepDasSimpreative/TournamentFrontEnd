@@ -12,6 +12,7 @@ import MatchDetailsPage from "./pages/match-details";
 import PlayerDetails from "./pages/player-details";
 import TeamStats from "./pages/stats";
 import TeamWiseStatsPage from "./pages/team-stats";
+import GoalsPage from "./pages/goals";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path="/stats" element={<TeamStats />} />
             <Route path="*" element={<NotFound />} /> {/* ✅ Catch-all for undefined routes */}
             <Route path="/stats/:tournamentId/:teamId" element={<TeamWiseStatsPage />} />
+            <Route path="/goals" element={<GoalsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

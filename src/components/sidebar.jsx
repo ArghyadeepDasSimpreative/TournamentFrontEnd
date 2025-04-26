@@ -6,6 +6,7 @@ import { MdOutlineSpaceDashboard } from "react-icons/md"
 import { RiTeamLine } from "react-icons/ri"
 import { IoFootballOutline } from "react-icons/io5"
 import { IoIosStats } from "react-icons/io"
+import { GiGoalKeeper } from "react-icons/gi";
 import { useNavigate, useLocation } from 'react-router-dom'
 
 const SidebarComponent = () => {
@@ -23,6 +24,7 @@ const SidebarComponent = () => {
         { label: 'Matches', icon: <IoFootballOutline fontSize={25} />, path: '/matches' },
         { label: 'Players', icon: <RiTeamLine fontSize={25} />, path: '/players' },
         { label: 'Statistics', icon: <IoIosStats fontSize={25} />, path: '/stats' },
+        { label: 'Goals', icon: <GiGoalKeeper fontSize={25} />, path: '/goals' }
     ]
 
     return (
@@ -46,7 +48,8 @@ const SidebarComponent = () => {
                                 style={{
                                     backgroundColor: isActive ? '#2D2D2D' : 'transparent', // Dark gray near bg-gray-800
                                     color: isActive ? 'white' : 'inherit',
-                                    borderRadius: '5px'
+                                    borderRadius: '5px',
+                                    margin: "0px 10px"
                                 }}
                             >
                                 {item.label}
@@ -59,4 +62,4 @@ const SidebarComponent = () => {
     )
 }
 
-export default SidebarComponent
+export default SidebarComponent;

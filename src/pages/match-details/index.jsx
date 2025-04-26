@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { axiosPrivate } from "../../services/config";
 import { useEffect, useState } from "react";
-import CustomSelect from "../../components/Select";
+import CustomSelect from "../../components/select";
 import InputComponent from "../../components/input";
 import Button from "../../components/Button";
 import { IoIosAdd } from "react-icons/io";
@@ -10,6 +10,9 @@ import { sortPlayersByPosition } from "../../lib/array";
 import PositionBadge from "../../components/position";
 import showToast from "../../lib/toast";
 import PlayingStatus from "../../components/PlayingStatus";
+import { getShortenedName } from "../../lib/text";
+import ModalComponent from "../../components/modal";
+import SubstitutionModal from "./SubstitutionModal";
 
 const bookingOptions = [
   { value: "none", label: "None" },
@@ -25,6 +28,9 @@ const MatchDetailspage = () => {
   const [matchCompletion, setMatchCompletion] = useState(false);
   const { tournamentId, id } = useParams();
   const [subModal, setSubModal] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [submitDisabled, setSubmitDisabled] = useState(false);
+  const [substitutingTeamDetails, setSubstitutingTeamDetails] = useState([]);
 
   const navigate = useNavigate();
 
@@ -148,6 +154,8 @@ const MatchDetailspage = () => {
 
   async function handleRecordSubmit() {
     try {
+      setSubmitLoading(true);
+      setSubmitDisabled(true);
       console.log("homeTeam details is ", homeTeamDetails, " and away team details is ", awayTeamDetails)
       setStatRecordLoading(true);
       let homeTeamPlayed = homeTeamDetails.players.filter(player => player.playingStatus).map(player => {
@@ -200,6 +208,8 @@ const MatchDetailspage = () => {
     }
     finally {
       setStatRecordLoading(false);
+      setSubmitLoading(false);
+      setSubmitDisabled(false);
     }
   }
 
@@ -215,13 +225,40 @@ const MatchDetailspage = () => {
     return optionFound;
   }
 
-  function handleSubModal() {
-
+  function handleSubModal(teamDetails) {
+    setSubModal(true);
+    console.log(teamDetails);
+    setSubstitutingTeamDetails(teamDetails);
+    
   }
+
+  function handleSubConfirm(updatedPlayers) {
+    console.log("updated players are ", updatedPlayers);
+    console.log("home team owner is ", homeTeamDetails.name)
+    console.log("away team owner is ", awayTeamDetails.name)
+    console.log("substituting team details are ", updatedPlayers.name)
+    if (homeTeamDetails.name == updatedPlayers.name) {
+      console.log("setting players for ", homeTeamDetails.name)
+      setHomeTeamDetails(prev=> ({...prev, players: updatedPlayers.players}));
+
+    }
+    else {
+      setAwayTeamDetails(prev=> ({...prev, players: updatedPlayers.players}));
+      console.log("setting players for ", awayTeamDetails.name)
+    }
+    setSubModal(false);
+  }
+
 
   useEffect(() => {
     getTeams();
   }, []);
+
+  // useEffect(function() {
+  //   let homeTeamPlayed = homeTeamDetails?.players.filter(player => player.playingStatus);
+  //   let awayTeamPlayed = awayTeamDetails?.players.filter(player => player.playingStatus);
+  //   setSubmitDisabled(homeTeamPlayed >= 11 && awayTeamPlayed >= 11 ? true : true)
+  // })
 
   return (
     <div className="p-4 flex flex-col items-center w-full">
@@ -236,7 +273,7 @@ const MatchDetailspage = () => {
               { teamDetails: homeTeamDetails, setTeamDetails: setHomeTeamDetails },
               { teamDetails: awayTeamDetails, setTeamDetails: setAwayTeamDetails }
             ].map(({ teamDetails, setTeamDetails }, teamIndex) => {
-              console.log("teamDetails is sssssssssssss", teamDetails);
+              console.log("from render players list are ", teamDetails)
               return (
                 <div key={teamIndex} className="flex flex-col justify-start w-1/2">
 
@@ -248,11 +285,14 @@ const MatchDetailspage = () => {
                     </p>
                   </div>
                   {
-                    teamDetails?.players.filter(player=>player.playingStatus).length >= 11 ?
-                    <Button onClick={handleSubModal}>Make Sub</Button>
-                    :
-                    <Button disabled={true}>Make Sub</Button>
+                    teamDetails?.players.filter(player => player.playingStatus).length >= 11 ?
+                      <Button onClick={() => handleSubModal(teamDetails)}>Make Sub</Button>
+                      :
+                      <Button disabled={true}>Make Sub</Button>
                   }
+                  <ModalComponent isOpen={subModal} onClose={() => setSubModal(false)}>
+                    <SubstitutionModal teamDetails={substitutingTeamDetails} onConfirm={handleSubConfirm} />
+                  </ModalComponent>
                   <div className={`border border-gray-300 p-2 my-4 gap-2 rounded-md flex flex-col overflow-y-scroll h-[75px] ${teamIndex % 2 == 0 ? "items-start" : "items-end"} justify-between gap-1`}>
                     {
                       teamDetails?.players.length !== 0 ? teamDetails?.players.filter(player => player.goalsScored > 0).map(player =>
@@ -265,9 +305,22 @@ const MatchDetailspage = () => {
                         <p className="text-lg font-semibold">No Scorer available</p>
                     }
                   </div>
+                  <div className="w-full flex flex-col gap-3 p-2 border border-slate-300 rounded-md mb-4 bg-white">
+                    <header className="w-full font-semibold">Will Expire Soon</header>
+                    <div className="flex gap-2 flex-wrap w-full h-[100px] overflow-y-scroll">
+                      {
+                        teamDetails?.players.filter(player => {
+                          let playTime = player.position == "GK" ? 1600 - player.playTime : 1300 - player.playTime;
+                          return playTime < 90
+                        }
+                        )
+                          .map(player => <div className="flex gap-2 bg-slate-900 px-2 p-1 rounded-lg text-xs text-white inline"><span className="font-normal">{getShortenedName(player.name)}</span>
+                            <span className="text-red-400">{player.position == "GK" ? 1600 - player.playTime : 1300 - player.playTime} mins</span></div>)
+                      }
+                    </div>
+                  </div>
                   <div className="flex flex-col w-full">
                     {teamDetails?.players.map((player, index) => {
-                      console.log("player is ", player.name , " and available is ", player.available)
                       return (
                         <div key={index} className={`relative border-2 ${player.available != "yes" && player.available != "yellow" ? "border-red-600 bg-red-100" : !player.playingStatus ? "border-gray-300 bg-white" : "border-green-700 bg-green-100"} px-3 py-2 rounded-md w-full mb-2 transition-all duration-300`}>
                           <PlayingStatus status={player.available} />
@@ -388,7 +441,7 @@ const MatchDetailspage = () => {
                           }
                           <div className="mt-4 rounded-sm flex items-center justify-between px-2 py-1 text-sm bg-slate-900 text-white">
                             <span>{player.playTime} mins played</span>
-                            <span>{1300 - player.playTime} mins left</span>
+                            <span className={player.position == "GK" ? "text-yellow-300" : "text-white"}>{player.position == "GK" ? 1600 - player.playTime : 1300 - player.playTime} mins left</span>
                           </div>
                         </div>
                       )
@@ -404,7 +457,7 @@ const MatchDetailspage = () => {
           {
             matchCompletion ? <Button onClick={() => console.log("ghghgh")}>Update Record</Button>
               :
-              <Button onClick={() => handleRecordSubmit()}>Submit</Button>
+              <Button disabled={submitDisabled} loading={submitLoading} onClick={() => handleRecordSubmit()}>Submit</Button>
           }
 
         </>

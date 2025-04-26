@@ -12,9 +12,9 @@ const MainLayout = () => {
           <Link to="/players" className="hover:underline">Players</Link>
         </nav>
       </header>
-      <main className="flex p-4">
+      <main className="flex">
         <SidebarComponent />
-        <div className='p-4 w-full min-h-screen'><Outlet /></div>
+        <div className='p-4 w-full min-h-screen bg-slate-100 m-0'><Outlet /></div>
 
       </main>
     </div>

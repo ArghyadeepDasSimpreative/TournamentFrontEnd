@@ -1,30 +1,70 @@
-import { IoClose } from "react-icons/io5"
+import { IoClose } from "react-icons/io5";
+import { motion, AnimatePresence } from "framer-motion";
+import { useEffect } from "react";
 
 const ModalComponent = ({ isOpen, onClose, children, allowOverlayClick = true }) => {
-  if (!isOpen) return null
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isOpen]);
+
+  // Animation variants
+  const modalVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.3, ease: "easeOut" }
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.95,
+      transition: { duration: 0.2, ease: "easeIn" }
+    }
+  };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-30 backdrop-blur-sm z-50">
-      {/* Overlay Click */}
-      {allowOverlayClick && (
-        <div className="absolute inset-0" onClick={onClose}></div>
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Overlay */}
+          <motion.div
+            className="absolute inset-0 bg-black backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.7 }}
+            exit={{ opacity: 0 }}
+            onClick={allowOverlayClick ? onClose : undefined}
+          />
+
+          {/* Modal Content */}
+          <motion.div
+            className="relative bg-white p-6 rounded-lg shadow-lg min-w-[50vw] max-w-[80vw] min-h-[60vh] z-10"
+            variants={modalVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            {/* Close Button */}
+            <button
+              className="absolute top-3 right-3 text-gray-600 hover:text-gray-900"
+              onClick={onClose}
+            >
+              <IoClose size={24} className="cursor-pointer" />
+            </button>
+
+            {/* Modal Body */}
+            <div className="mt-2">{children}</div>
+          </motion.div>
+        </div>
       )}
+    </AnimatePresence>
+  );
+};
 
-      {/* Modal Content */}
-      <div className="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-[80vw] z-10">
-        {/* Close Button */}
-        <button
-          className="absolute top-3 right-3 text-gray-600 hover:text-gray-900 cursor-pointer"
-          onClick={onClose}
-        >
-          <IoClose size={24} />
-        </button>
-
-        {/* Modal Body */}
-        <div className="mt-2">{children}</div>
-      </div>
-    </div>
-  )
-}
-
-export default ModalComponent
+export default ModalComponent;

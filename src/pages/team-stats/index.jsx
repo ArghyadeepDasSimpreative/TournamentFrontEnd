@@ -30,6 +30,22 @@ const TeamWiseStatsPage = () => {
         { key: "opponentName", label: "Opponent" },
         { key: "matchType", label: "Match Type" },
         { key: "score", label: "Score" },
+        {
+            key: "winStatus", label: "Status", render: (row) => (
+                <span
+                    className={
+                        row.winStatus === "won"
+                            ? "text-green-600 font-semibold"
+                            : row.winStatus === "lost"
+                                ? "text-red-600 font-semibold"
+                                : "text-yellow-600 font-semibold"
+                    }
+                >
+                    {row.winStatus}
+                </span>
+            )
+        }
+
     ];
 
     return (
@@ -41,8 +57,8 @@ const TeamWiseStatsPage = () => {
             ) : teamStats ? (
                 <>
                     {/* Team Details */}
-                    <div className="flex items-start gap-4 p-4 border border-gray-600 rounded-md shadow-md">
-                        <ImageComponent src={teamStats.teamDetails.profileImage} alt={teamStats.teamDetails.teamName} className="w-16 h-16 rounded-md mr-4" type="server"/>
+                    <div className="flex items-start gap-4 p-4 border border-gray-600 rounded-md shadow-md bg-white">
+                        <ImageComponent src={teamStats.teamDetails.profileImage} alt={teamStats.teamDetails.teamName} className="w-16 h-16 rounded-md mr-4" type="server" />
                         <div>
                             <h3 className="text-lg font-semibold">{teamStats.teamDetails.teamName}</h3>
                             <p className="text-gray-600">Owner: {teamStats.teamDetails.name}</p>

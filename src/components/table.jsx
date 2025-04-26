@@ -11,7 +11,7 @@ const TableComponent = ({ columns, data, perPageOptions = [5, 10, 20] }) => {
   return (
     <div className="w-full py-4">
       {/* Table */}
-      <table className="w-full border-collapse border border-gray-300">
+      <table className="w-full border-collapse border border-gray-300 bg-white">
         {/* Table Head */}
         <thead>
           <tr className="text-left border-b border-gray-300">
@@ -56,7 +56,7 @@ const TableComponent = ({ columns, data, perPageOptions = [5, 10, 20] }) => {
               setPerPage(Number(e.target.value))
               setCurrentPage(1) // Reset to first page
             }}
-            className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none"
+            className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none bg-white"
           >
             {perPageOptions.map((option) => (
               <option key={option} value={option}>
@@ -71,7 +71,7 @@ const TableComponent = ({ columns, data, perPageOptions = [5, 10, 20] }) => {
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
-            className={`px-3 py-1 border border-gray-300 rounded-md text-sm ${
+            className={`bg-white px-3 py-1 border border-gray-300 rounded-md text-sm ${
               currentPage === 1 ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'
             }`}
           >
@@ -85,7 +85,7 @@ const TableComponent = ({ columns, data, perPageOptions = [5, 10, 20] }) => {
           <button
             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
-            className={`px-3 py-1 border border-gray-300 rounded-md text-sm ${
+            className={`bg-white px-3 py-1 border border-gray-300 rounded-md text-sm ${
               currentPage === totalPages ? 'text-gray-400 cursor-not-allowed' : 'hover:bg-gray-100'
             }`}
           >
